@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AdsGram Balance App</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #4e9fff, #6ac9ff);
+        text-align: center;
+        padding-top: 60px;
+    }
+
+    .balance-box {
+        background: white;
+        width: 260px;
+        margin: auto;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .balance-title {
+        font-size: 16px;
+        color: #666;
+    }
+
+    .balance-value {
+        font-size: 30px;
+        font-weight: bold;
+        margin-top: 8px;
+        color: #000;
+    }
+
+    .main-btn {
+        margin-top: 25px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #007bff, #00a2ff);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        box-shadow: 0 4px 10px rgba(0,123,255,0.4);
+        cursor: pointer;
+    }
+
+    .withdraw-btn {
+        margin-top: 15px;
+        padding: 12px 26px;
+        background: #00c16e;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        box-shadow: 0 4px 10px rgba(0,200,120,0.4);
+        cursor: pointer;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="balance-box">
+    <div class="balance-title">Balans</div>
+    <div class="balance-value" id="balance">0.00 ₽</div>
+</div>
+
+<button class="main-btn" onclick="showAd()">Reklama Ko‘rsatish</button>
+
+<br>
+<button class="withdraw-btn" onclick="location.href='withdraw.html'">Withdraw</button>
+
+<!-- AdsGram script -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+    // Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIeG8dVbm0Yk7FR1hPzrBoD7rgDKWAFoY",
+      authDomain: "user1111-c84a0.firebaseapp.com",
+      databaseURL: "https://user1111-c84a0-default-rtdb.firebaseio.com",
+      projectId: "user1111-c84a0",
+      storageBucket: "user1111-c84a0.firebasestorage.app",
+      messagingSenderId: "901723757936",
+      appId: "1:901723757936:web:887a4b206b9d082d0c03b5",
+      measurementId: "G-5Y3G8T24XN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // USER ID YARATISH (login bo‘lmasdan)
+    let deviceId = localStorage.getItem("deviceId");
+    if (!deviceId) {
+        deviceId = "user_" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("deviceId", deviceId);
+    }
+
+    // BALANS
+    let balance = 0.00;
+
+    // Firebase’dan balansni yuklash
+    const dbRef = ref(db);
+    get(child(dbRef, "users/" + deviceId + "/balance")).then((snapshot) => {
+        if (snapshot.exists()) {
+            balance = snapshot.val();
+            document.getElementById("balance").innerText = balance.toFixed(2) + " ₽";
+        }
+    });
+
+    // AdsGram Init
+    const AdController = window.Adsgram.init({
+        blockId: "int-18291"  // ← BU YERGA O'ZINGNING BLOCK ID'INGNI YOZ
+    });
+
+    // Reklama ko‘rsatish
+    window.showAd = function() {
+        AdController.show()
+            .then(() => {
+                balance += 0.02;
+                document.getElementById("balance").innerText = balance.toFixed(2) + " ₽";
+
+                // Firebase’ga saqlash
+                set(ref(db, "users/" + deviceId), {
+                    balance: balance
+                });
+            })
+            .catch((err) => {
+                console.log("Xato:", err);
+                alert("Reklama yuklanmadi!");
+            });
+    };
+</script>
+
+</body>
+</html>
