@@ -2,62 +2,61 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Withdraw</title>
-
+<title>Pul Yechib Olish</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #4e9fff, #6ac9ff);
-        text-align: center;
-        padding-top: 60px;
-    }
-
-    .box {
-        width: 300px;
-        background: white;
-        padding: 25px;
-        border-radius: 14px;
-        margin: auto;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    input {
-        width: 90%;
+    body { font-family: Arial, sans-serif; background: linear-gradient(135deg,#4e9fff,#6ac9ff); text-align:center; padding-top:60px; color: #333;}
+    .withdraw-box{background:white;width:300px;margin:auto;padding:30px;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,0.2);}
+    .box-title{font-size:24px;font-weight:bold;margin-bottom:20px;color:#007bff;}
+    input[type="text"], input[type="number"] {
+        width: 100%;
         padding: 12px;
-        margin-top: 10px;
-        border-radius: 10px;
+        margin: 10px 0;
+        display: inline-block;
         border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
         font-size: 16px;
     }
-
-    button {
+    .submit-btn{
         margin-top: 20px;
-        padding: 12px 28px;
-        background: #00c16e;
+        padding: 14px 28px;
+        background: linear-gradient(135deg,#00c16e,#00e689);
         color: white;
         border: none;
         border-radius: 10px;
         font-size: 18px;
+        box-shadow: 0 4px 10px rgba(0,200,120,0.4);
         cursor: pointer;
         width: 100%;
-        box-shadow: 0 4px 10px rgba(0,200,120,0.4);
+    }
+    .back-btn {
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #f0f0f0;
+        color: #007bff;
+        border: 1px solid #007bff;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
     }
 </style>
 </head>
 <body>
-
-<div class="box">
-    <h2>Withdraw</h2>
-    <input type="text" id="payeer" placeholder="Payeer hisob (P100000)" />
-    <input type="number" id="amount" placeholder="Yechiladigan summa (₽)" />
-
-    <button onclick="sendWithdraw()">Yuborish</button>
+<div class="withdraw-box">
+    <div class="box-title">💸 Pul Yechib Olish</div>
+    <form id="withdrawForm">
+        <input type="text" id="payeer" placeholder="Payeer Hamyon Raqamingiz (Pxxxxxxx)" required><br>
+        <input type="number" id="amount" placeholder="Miqdor (₽)" min="1" step="0.01" required><br>
+        <button type="submit" class="submit-btn">So‘rov Yuborish</button>
+    </form>
+    <button class="back-btn" onclick="location.href='index.html'">Ortga Qaytish</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, get, child, update, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, get, child, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // index.html dan olingan Firebase konfiguratsiyasi
     const firebaseConfig = {
       apiKey: "AIzaSyDIeG8dVbm0Yk7FR1hPzrBoD7rgDKWAFoY",
       authDomain: "user1111-c84a0.firebaseapp.com",
@@ -71,63 +70,75 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
+    const dbRef = ref(db);
+    
+    // index.html dan olingan deviceId ni olish
     let deviceId = localStorage.getItem("deviceId");
     if(!deviceId){
-        alert("Iltimos, avval index.html ni oching.");
-        location.href="index.html";
+        alert("Foydalanuvchi identifikatori topilmadi. Iltimos, avval index.html ni oching.");
+        window.location.href = "index.html";
     }
 
-    function sendWithdraw() {
+    document.getElementById("withdrawForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        
         const payeer = document.getElementById("payeer").value.trim();
         const amount = parseFloat(document.getElementById("amount").value);
-
-        if(!payeer || !payeer.startsWith("P") || payeer.length < 7){
-            alert("Payeer hisob noto'g'ri!");
+        
+        if (payeer === "" || amount <= 0 || isNaN(amount)) {
+            alert("Iltimos, Payeer raqami va to'g'ri miqdorni kiriting.");
             return;
         }
 
-        if(isNaN(amount) || amount < 1){
-            alert("Minimal yechish: 1₽");
-            return;
-        }
+        // Foydalanuvchi balansini tekshirish
+        get(child(dbRef, "users/"+deviceId)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                const currentBalance = userData.balance || 0.00;
 
-        get(child(ref(db), "users/" + deviceId + "/balance")).then((snapshot) => {
-            if(!snapshot.exists()){
-                alert("Balans topilmadi!");
-                return;
+                if (amount > currentBalance) {
+                    alert("Balansingizda yetarli mablag' mavjud emas. Balansingiz: " + currentBalance.toFixed(2) + " ₽");
+                    return;
+                }
+                
+                // Balans yetarli bo'lsa, so'rovni yuborish
+                const withdrawData = {
+                    deviceId: deviceId,
+                    payeer: payeer,
+                    amount: amount.toFixed(2),
+                    status: "pending", // So'rov holati
+                    timestamp: Date.now()
+                };
+
+                // So'rovni "withdrawRequests" bo'limiga qo'shish (admin ko'rishi uchun)
+                push(ref(db, "withdrawRequests"), withdrawData)
+                .then(() => {
+                    // Foydalanuvchi balansini yangilash (kamaytirish)
+                    const newBalance = currentBalance - amount;
+                    set(ref(db, "users/"+deviceId), {...userData, balance: newBalance})
+                    .then(() => {
+                        alert(`So'rov muvaffaqiyatli yuborildi: ${amount.toFixed(2)} ₽ Payeer ${payeer} raqamiga. Balansingiz yangilandi.`);
+                        // Yuborilgandan so'ng maydonlarni tozalash
+                        document.getElementById("payeer").value = "";
+                        document.getElementById("amount").value = "";
+                    }).catch((error) => {
+                        console.error("Balansni yangilashda xatolik:", error);
+                        alert("So'rov yuborildi, ammo balansni yangilashda xatolik yuz berdi. Iltimos, adminga murojaat qiling.");
+                    });
+                })
+                .catch((error) => {
+                    console.error("So'rovni yuborishda xatolik:", error);
+                    alert("So'rovni yuborishda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring.");
+                });
+                
+            } else {
+                alert("Balans ma'lumotlari topilmadi. Iltimos, index.html orqali qayta urinib ko'ring.");
             }
-
-            let balance = snapshot.val();
-
-            if(balance < amount){
-                alert("Balans yetarli emas!");
-                return;
-            }
-
-            // Balansdan ayirish
-            update(ref(db, "users/" + deviceId), {
-                balance: balance - amount
-            });
-
-            // Admin so‘rovini yuborish
-            const newReq = push(ref(db, "withdraw_requests"));
-            set(newReq, {
-                user: deviceId,
-                payeer: payeer,
-                amount: amount,
-                status: "pending",
-                timestamp: Date.now()
-            });
-
-            alert("So‘rov yuborildi!");
-            location.href = "index.html";
-        }).catch(err=>{
-            console.log("Xato:", err);
-            alert("Xatolik yuz berdi!");
+        }).catch((error) => {
+            console.error(error);
+            alert("Ma'lumotlar bazasiga ulanishda xatolik.");
         });
-    }
+    });
 </script>
-
 </body>
 </html>
