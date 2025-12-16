@@ -4,26 +4,21 @@
 <meta charset="UTF-8">
 <title>HTML Run App - Multi File Unlimited</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
-
 <style>
 *{box-sizing:border-box;font-family:Segoe UI,sans-serif}
-
 body{
   margin:0;
   min-height:100vh;
   background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   color:#fff;
 }
-
 /* EDITOR */
 .app{
   max-width:700px;
   margin:auto;
   padding:25px;
 }
-
 input, textarea{
   width:100%;
   border-radius:12px;
@@ -31,11 +26,9 @@ input, textarea{
   padding:15px;
   margin-bottom:10px;
 }
-
 textarea{
   height:160px;
 }
-
 button{
   width:100%;
   margin-top:5px;
@@ -48,7 +41,6 @@ button{
   background:linear-gradient(135deg,#00f260,#0575e6);
   color:#fff;
 }
-
 /* RUN PAGE */
 #runResult{
   padding:20px;
@@ -98,45 +90,38 @@ function save(){
     return;
   }
 
-  var codeArea = document.getElementById("code").value;
   var files = document.getElementById("files").files;
-  var combinedCode = codeArea;
-
-  if(files.length > 0){
-    let readCount = 0;
+  if(files.length === 0){
+    // Faqat textarea kodi
+    var codeArea = document.getElementById("code").value;
+    saveSingleFile(name, codeArea);
+  } else {
+    // Har bir fayl alohida saqlansin
     for(let i=0;i<files.length;i++){
       let file = files[i];
       let reader = new FileReader();
       reader.onload = function(e){
         let ext = file.name.split('.').pop().toLowerCase();
-        if(ext === "css"){
-          combinedCode += `<style>${e.target.result}</style>\n`;
-        } else if(ext === "js"){
-          combinedCode += `<script>${e.target.result}<\/script>\n`;
-        } else if(ext === "html" || ext === "htm"){
-          combinedCode += `\n${e.target.result}\n`;
-        }
-        readCount++;
-        if(readCount === files.length){
-          saveToFirebase(name, combinedCode);
-        }
+        let codeContent = e.target.result;
+
+        // Har bir fayl uchun alohida Firebase yozish
+        saveSingleFile(file.name.replace(/\.[^/.]+$/,""), codeContent);
       }
       reader.readAsText(file);
     }
-  } else {
-    saveToFirebase(name, combinedCode);
   }
 }
 
-function saveToFirebase(name, code){
-  // Random 6 belgidan iborat string yaratish
+function saveSingleFile(name, code){
   var randomStr = Math.random().toString(36).substring(2,8);
   var uniqueId = name + "-" + randomStr;
 
   db.ref("codes/"+uniqueId).set(code);
 
   var link = location.origin + location.pathname + "?run=" + encodeURIComponent(uniqueId);
-  document.getElementById("link").innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+  var linkEl = document.createElement("p");
+  linkEl.innerHTML = `<b>${name}</b> uchun link: <a href="${link}" target="_blank">${link}</a>`;
+  document.getElementById("link").appendChild(linkEl);
 }
 </script>
 
