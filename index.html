@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HTML Run App</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+
+</head>
+<body>
+
+<h2>HTML yozing</h2>
+
+<textarea id="code" style="width:100%;height:150px;"></textarea><br><br>
+<button onclick="save()">RUN + LINK</button>
+
+<p id="link"></p>
+
+<hr>
+<h2>Natija</h2>
+<div id="result"></div>
+
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyBrMKJ4MPilQg6gZsaE-Hlqlgo5F4Q8IsM",
+  databaseURL: "https://xabar-tizimi-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+
+var db = firebase.database();
+
+// URLdan ID olish
+var params = new URLSearchParams(window.location.search);
+var runId = params.get("run");
+
+if(runId){
+  db.ref("codes/"+runId).once("value").then(snap=>{
+    document.getElementById("result").innerHTML = snap.val();
+  });
+}
+
+// Saqlash
+function save(){
+  var code = document.getElementById("code").value;
+  var id = Date.now();
+  db.ref("codes/"+id).set(code);
+
+  var link = location.origin + location.pathname + "?run=" + id;
+  document.getElementById("link").innerHTML =
+    `<a href="${link}" target="_blank">${link}</a>`;
+}
+</script>
+
+</body>
+</html>
