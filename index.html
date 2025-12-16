@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<title>HTML Run App</title>
+<title>HTML Run App - Multi File Unlimited</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
@@ -59,9 +59,10 @@ button{
 
 <!-- EDITOR -->
 <div id="editor" class="app">
-  <h2>🚀 HTML Run App</h2>
+  <h2>🚀 HTML Run App - Cheksiz Fayl</h2>
   <input type="text" id="name" placeholder="Link nomini yozing (masalan: loyiham-mening)">
-  <textarea id="code" placeholder="HTML yozing..."></textarea>
+  <textarea id="code" placeholder="HTML kod yoki index.html yozing..."></textarea>
+  <input type="file" id="files" multiple webkitdirectory directory>
   <button onclick="save()">▶ RUN & LINK</button>
   <p id="link"></p>
 </div>
@@ -91,18 +92,51 @@ if(runId){
 }
 
 function save(){
-  var code=document.getElementById("code").value;
-  var name=document.getElementById("name").value.trim();
-
+  var name = document.getElementById("name").value.trim();
   if(!name){
     alert("Iltimos link uchun nom yozing!");
     return;
   }
 
-  db.ref("codes/"+name).set(code);
+  var codeArea = document.getElementById("code").value;
+  var files = document.getElementById("files").files;
+  var combinedCode = codeArea;
 
-  var link=location.origin+location.pathname+"?run="+encodeURIComponent(name);
-  document.getElementById("link").innerHTML=`<a href="${link}" target="_blank">${link}</a>`;
+  if(files.length > 0){
+    let readCount = 0;
+    for(let i=0;i<files.length;i++){
+      let file = files[i];
+      let reader = new FileReader();
+      reader.onload = function(e){
+        let ext = file.name.split('.').pop().toLowerCase();
+        if(ext === "css"){
+          combinedCode += `<style>${e.target.result}</style>\n`;
+        } else if(ext === "js"){
+          combinedCode += `<script>${e.target.result}<\/script>\n`;
+        } else if(ext === "html" || ext === "htm"){
+          combinedCode += `\n${e.target.result}\n`;
+        }
+        readCount++;
+        if(readCount === files.length){
+          saveToFirebase(name, combinedCode);
+        }
+      }
+      reader.readAsText(file);
+    }
+  } else {
+    saveToFirebase(name, combinedCode);
+  }
+}
+
+function saveToFirebase(name, code){
+  // Random 6 belgidan iborat string yaratish
+  var randomStr = Math.random().toString(36).substring(2,8);
+  var uniqueId = name + "-" + randomStr;
+
+  db.ref("codes/"+uniqueId).set(code);
+
+  var link = location.origin + location.pathname + "?run=" + encodeURIComponent(uniqueId);
+  document.getElementById("link").innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
 }
 </script>
 
