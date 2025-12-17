@@ -32,6 +32,8 @@ const container = document.querySelector('.container');
 const editorPanel = document.querySelector('.panel.editor');
 const resultPanel = document.querySelector('.panel.result'); 
 
+// Yuklangan fayllarning tarkibini saqlash uchun xarita
+let loadedFileContents = {}; 
 
 // --- 1. Kodni ishga tushirish funksiyasi ---
 function runCode() {
@@ -84,29 +86,23 @@ async function saveAndGetFirebaseLink() {
     }
 }
 
-// --- 3. URL manzilidagi kodni o'qish va yuklash funksiyasi (TO'G'RILANDI) ---
+// --- 3. URL manzilidagi kodni o'qish va yuklash funksiyasi ---
 async function loadCodeFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const snippetId = urlParams.get('id');
     const isRunMode = urlParams.get('run') === 'true';
 
-    // Agar ID topilsa, Firebase'dan yuklashga harakat qilamiz
     if (snippetId) {
         try {
-            // Firebase'dan ma'lumotni olish
             const snapshot = await database.ref(`snippets/${snippetId}`).once('value');
 
             if (snapshot.exists()) {
                 const loadedCode = snapshot.val().code;
                 
                 if (isRunMode) {
-                    // *** TOZA NATIJA REJIMI ***
-                    
-                    // Asosiy interfeys elementlarini butunlay yashirish
                     if (header) header.style.display = 'none';
                     if (container) container.style.display = 'none';
                     
-                    // Sahifaga to'liq ekranli IFRAME yaratish/topish
                     let fullScreenIframe = document.getElementById('full-result-iframe');
                     
                     if (!fullScreenIframe) {
@@ -114,7 +110,6 @@ async function loadCodeFromUrl() {
                         fullScreenIframe.id = 'full-result-iframe';
                         fullScreenIframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin');
                         
-                        // To'liq ekranli uslublarni qo'llash (sahifaning barcha elementlarini qoplash uchun)
                         fullScreenIframe.style.cssText = `
                             width: 100vw; 
                             height: 100vh;
@@ -124,19 +119,17 @@ async function loadCodeFromUrl() {
                             margin: 0;
                             padding: 0;
                             border: none;
-                            z-index: 9999; /* Boshqa hamma narsadan ustun bo'lishi uchun */
+                            z-index: 9999; 
                         `;
                         document.body.appendChild(fullScreenIframe);
                     }
                     
-                    // Kodni iframe ichiga yuklash
                     fullScreenIframe.srcdoc = loadedCode;
-                    document.body.style.overflow = 'hidden'; // Asosiy sahifaning scroll-barini o'chirish
+                    document.body.style.overflow = 'hidden'; 
                     
                     console.log(`Toza natija Firebase'dan yuklandi (ID: ${snippetId}).`);
                     return; 
                 } else {
-                    // Tahrirlash Rejimi
                     editor.value = loadedCode;
                     runCode();
                 }
@@ -150,7 +143,6 @@ async function loadCodeFromUrl() {
         }
     } 
     
-    // Agar ID bo'lmasa yoki yuklashda xato bo'lsa, Tahrirlash rejimida namuna kodni yuklash
     if (!editor.value) {
         editor.value = `<h1>Salom, Bu mening Firebase Snip Loyiham!</h1>
 <p>Kodni o'zgartiring va "Save & Get Link"ni bosing.</p>
@@ -161,17 +153,19 @@ async function loadCodeFromUrl() {
     }
 }
 
-// --- 4. Telefon/Kompyuter faylidan kodni yuklash funksiyasi (O'zgartirildi) ---
+// --- 4. Telefon/Kompyuter faylidan kodni yuklash funksiyasi (Tuzatildi: Birlashtirish olib tashlandi) ---
 function loadFile(event) {
     const files = event.target.files;
     if (files.length === 0) {
         return;
     }
 
-    let allContent = "";
     let filesLoaded = 0;
     const totalFiles = files.length;
     let fileNames = [];
+    
+    // Har safar yuklashda avvalgi fayl tarkibini tozalash
+    loadedFileContents = {}; 
 
     // Barcha fayllarni o'qish uchun tsikl
     for (let i = 0; i < totalFiles; i++) {
@@ -180,27 +174,47 @@ function loadFile(event) {
         const reader = new FileReader();
         
         reader.onload = (e) => {
-            // Har bir fayl tarkibini fayl nomi bilan qo'shamiz
-            allContent += `\n/* --- ${file.name} (File Content Start) --- */\n`;
-            allContent += e.target.result;
-            allContent += `\n/* --- ${file.name} (File Content End) --- */\n`;
-
+            const fileContent = e.target.result;
+            
+            // 1. Fayl tarkibini global xaritaga saqlash
+            loadedFileContents[file.name] = fileContent; 
             filesLoaded++;
             
-            // Barcha fayllar o'qib bo'lingach, muharrirni yangilash
+            // Barcha fayllar o'qib bo'lingach, ishga tushirish
             if (filesLoaded === totalFiles) {
-                editor.value = allContent.trim(); // Trim qilingan tarkibni o'rnatish
-                runCode(); 
+                
+                // Muharrirga va Natija maydoniga faqat BIRINCHI fayl tarkibini yuklash
+                const initialFileName = files[0].name; 
+                switchIframeContent(initialFileName); 
+                
                 shareLinkOutput.style.display = 'none';
                 
-                // Muvaffaqiyat xabari
-                alert(`✅ Quyidagi fayllar muvaffaqiyatli yuklandi: ${fileNames.join(', ')}.`);
+                alert(`✅ Quyidagi ${totalFiles} ta fayl muvaffaqiyatli yuklandi: ${fileNames.join(', ')}. 
+                
+Natija maydonida hozircha "${initialFileName}" fayli ishlamoqda.
+                
+MUHIM: Fayllar o'rtasida o'tish uchun kodingizdagi \n<a href="chat.html">...</a> kabi havolani quyidagi kabi JavaScript funksiyasiga almashtiring (Masalan, index.html ichida): \n\n<button onclick="window.parent.switchIframeContent('chat.html')">Chatga o'tish</button>`);
             }
         };
 
         reader.readAsText(file);
     }
 }
+
+// Natijalar maydoni (`<iframe>`) tarkibini almashtirish (Tuzatildi: Editorni ham yangilaydi)
+function switchIframeContent(fileName) {
+    const content = loadedFileContents[fileName];
+    if (content) {
+        // Kontentni to'g'ridan-to'g'ri iframe'ga yozish (Natijani ko'rsatish)
+        resultIframe.srcdoc = content;
+        
+        // Muharrir maydonini ham joriy fayl tarkibi bilan yangilash (Tahrirlash uchun)
+        editor.value = content; 
+    } else {
+        alert('Xatolik: "' + fileName + '" fayli topilmadi. Avval uni yuklaganingizga ishonch hosil qiling.');
+    }
+}
+
 
 // Sahifa yuklanganda kodni yuklash
 window.onload = loadCodeFromUrl;
