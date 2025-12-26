@@ -5,7 +5,6 @@
 <title>HTML → GitHub Link</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  /* Body */
   body{
     margin:0;
     min-height:100vh;
@@ -15,8 +14,6 @@
     background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     font-family:'Arial', sans-serif;
   }
-
-  /* Container */
   .box{
     width:90%;
     max-width:650px;
@@ -27,16 +24,12 @@
     color:#fff;
     box-shadow:0 8px 32px rgba(0,0,0,0.25);
   }
-
-  /* Headline */
   h2{
     text-align:center;
     margin-bottom:20px;
     font-size:24px;
     color:#00e0ff;
   }
-
-  /* Textarea */
   textarea{
     width:100%;
     height:220px;
@@ -49,8 +42,6 @@
     color:#fff;
     resize:vertical;
   }
-
-  /* Inputs */
   input{
     width:100%;
     padding:12px;
@@ -61,8 +52,6 @@
     background:rgba(255,255,255,0.05);
     color:#fff;
   }
-
-  /* Button */
   button{
     width:100%;
     margin-top:15px;
@@ -79,8 +68,6 @@
   button:hover{
     background:#00b0e6;
   }
-
-  /* Output */
   #out{
     margin-top:20px;
     word-break:break-all;
@@ -105,7 +92,7 @@
 </div>
 
 <script>
-const TOKEN = "GITHUB_TOKEN_HERE"; // Tokeningni shu yerga yoz
+const TOKEN = ""; // Tokeningni shu yerga yoz
 const OWNER = "azizbek2222"; // GitHub username
 const REPO = "html-test";    // GitHub repo nomi
 
@@ -145,12 +132,20 @@ async function upload(){
   if(data.content){
     const link = `https://${OWNER}.github.io/${REPO}/${filename}`;
     document.getElementById("out").innerHTML =
-      "✅ LINK:<br><a href='"+link+"' target='_blank'>"+link+"</a> <br>" +
-      "<button onclick=\"navigator.clipboard.writeText('"+link+"')\">Nusxalash</button>";
+      `✅ LINK:<br>
+       <a href="${link}" target="_blank">${link}</a> <br>
+       <button id="copyBtn">Nusxalash</button>`;
+
+    // Nusxalash tugmasi ishlashi
+    document.getElementById("copyBtn").onclick = () => {
+      navigator.clipboard.writeText(link)
+        .then(()=>alert("Link nusxalandi!"))
+        .catch(()=>alert("Nusxalashda xato yuz berdi!"));
+    };
   }else{
     document.getElementById("out").innerText =
       "❌ Xatolik: " + JSON.stringify(data);
-}
+  }
 }
 </script>
 </body>
