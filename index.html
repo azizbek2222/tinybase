@@ -131,17 +131,25 @@ async function upload(){
 
   if(data.content){
     const link = `https://${OWNER}.github.io/${REPO}/${filename}`;
-    document.getElementById("out").innerHTML =
-      `✅ LINK:<br>
-       <a href="${link}" target="_blank">${link}</a> <br>
-       <button id="copyBtn">Nusxalash</button>`;
 
-    // Nusxalash tugmasi ishlashi
-    document.getElementById("copyBtn").onclick = () => {
-      navigator.clipboard.writeText(link)
-        .then(()=>alert("Link nusxalandi!"))
-        .catch(()=>alert("Nusxalashda xato yuz berdi!"));
+    // Eski usul nusxalash
+    const outDiv = document.getElementById("out");
+    outDiv.innerHTML = `
+      ✅ LINK:<br>
+      <a href="${link}" target="_blank">${link}</a> <br>
+      <button id="copyBtn">Nusxalash</button>
+      <textarea id="tmpCopy" style="position:absolute; left:-9999px;">${link}</textarea>
+    `;
+
+    const copyBtn = document.getElementById("copyBtn");
+    copyBtn.onclick = function(){
+      const tmp = document.getElementById("tmpCopy");
+      tmp.select();
+      tmp.setSelectionRange(0, 99999); // mobil uchun
+      document.execCommand("copy");
+      alert("Link nusxalandi!");
     };
+
   }else{
     document.getElementById("out").innerText =
       "❌ Xatolik: " + JSON.stringify(data);
