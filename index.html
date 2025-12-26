@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<title>HTML → GitHub Link (Telegram ID Auto)</title>
+<title>HTML → GitHub Link (Telegram ID + User File)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
   body{
@@ -30,16 +30,19 @@
     font-size:24px;
     color:#00e0ff;
   }
-  textarea{
+  textarea, input{
     width:100%;
-    height:220px;
-    border:none;
-    border-radius:12px;
     padding:12px;
-    font-family:monospace;
+    margin-top:12px;
+    border:none;
+    border-radius:10px;
     font-size:14px;
     background:rgba(255,255,255,0.05);
     color:#fff;
+  }
+  textarea{
+    height:220px;
+    font-family:monospace;
     resize:vertical;
   }
   button{
@@ -73,6 +76,9 @@
   <label>HTML kodni shu yerga yoz:</label>
   <textarea id="code" placeholder="Bu yerga HTML kod yoziladi..."></textarea>
 
+  <label>Fayl nomi (masalan: index.html):</label>
+  <input id="filename" placeholder="index.html" />
+
   <button onclick="upload()">Link olish</button>
 
   <div id="out"></div>
@@ -84,8 +90,7 @@
   const OWNER = "azizbek2222"; // GitHub username
   const REPO = "html-test";    // GitHub repo nomi
 
-  // Telegram mini app orqali foydalanuvchi info
-  // Telegram Web App API orqali Telegram ID olish
+  // Telegram mini app orqali foydalanuvchi ID olish
   const telegramUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
   if(!telegramUserId){
@@ -96,9 +101,12 @@
     if(!telegramUserId){ return; }
 
     const html = document.getElementById("code").value.trim();
-    if(!html){ alert("HTML kodni yozing!"); return; }
+    const filenameInput = document.getElementById("filename").value.trim();
 
-    const filename = `${telegramUserId}/index.html`; // Papka nomi = Telegram ID
+    if(!html){ alert("HTML kodni yozing!"); return; }
+    if(!filenameInput){ alert("Fayl nomini yozing!"); return; }
+
+    const filename = `${telegramUserId}/${filenameInput}`; // Papka = Telegram ID, fayl = foydalanuvchi kiritadi
 
     const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filename}`;
 
@@ -127,7 +135,7 @@
     const data = await res.json();
 
     if(data.content){
-      const link = `https://${OWNER}.github.io/${REPO}/${telegramUserId}/index.html`;
+      const link = `https://${OWNER}.github.io/${REPO}/${telegramUserId}/${filenameInput}`;
 
       // Nusxalash
       const outDiv = document.getElementById("out");
