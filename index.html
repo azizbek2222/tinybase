@@ -1,93 +1,156 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8" />
-<title>HTML → Real Link (GitHub Pages)</title>
+<meta charset="UTF-8">
+<title>HTML → GitHub Link</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body{font-family:sans-serif;background:#0f172a;color:#e5e7eb;padding:20px}
-  textarea{width:100%;height:220px;border-radius:8px;padding:10px}
-  input,button{padding:10px;border-radius:8px;border:none}
-  button{background:#22c55e;color:#052e16;cursor:pointer}
-  .box{max-width:900px;margin:auto}
-  .out{margin-top:15px;word-break:break-all}
+  /* Body */
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    font-family:'Arial', sans-serif;
+  }
+
+  /* Container */
+  .box{
+    width:90%;
+    max-width:650px;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    border-radius:20px;
+    padding:30px 25px;
+    color:#fff;
+    box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  }
+
+  /* Headline */
+  h2{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:24px;
+    color:#00e0ff;
+  }
+
+  /* Textarea */
+  textarea{
+    width:100%;
+    height:220px;
+    border:none;
+    border-radius:12px;
+    padding:12px;
+    font-family:monospace;
+    font-size:14px;
+    background:rgba(255,255,255,0.05);
+    color:#fff;
+    resize:vertical;
+  }
+
+  /* Inputs */
+  input{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:none;
+    border-radius:10px;
+    font-size:14px;
+    background:rgba(255,255,255,0.05);
+    color:#fff;
+  }
+
+  /* Button */
+  button{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#00c6ff;
+    color:#000;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+  }
+  button:hover{
+    background:#00b0e6;
+  }
+
+  /* Output */
+  #out{
+    margin-top:20px;
+    word-break:break-all;
+    font-size:14px;
+  }
 </style>
 </head>
+
 <body>
 <div class="box">
-  <h2>HTML kodni yoz → Real link ol</h2>
+  <h2>HTML → GitHub Pages link</h2>
 
-  <textarea id="htmlCode"><!DOCTYPE html>
-<html>
-<body>
-<h1>Salom!</h1>
-<p>Bu real GitHub Pages link.</p>
-</body>
-</html></textarea>
+  <label>HTML kodni shu yerga yoz:</label>
+  <textarea id="code" placeholder="Bu yerga HTML kod yoziladi..."></textarea>
 
-  <br><br>
+  <label>Fayl nomi (masalan: index.html):</label>
+  <input id="filename" placeholder="index.html" />
 
-  <!-- SOZLAMALAR -->
-  <input id="token" placeholder="GitHub TOKEN" style="width:100%" />
-  <br><br>
-  <input id="repo" placeholder="Repo nomi" />
-  <input id="path" placeholder="index.html" value="index.html" />
-  <br><br>
+  <button onclick="upload()">Link olish</button>
 
-  <button onclick="upload()">Link yaratish</button>
-
-  <div class="out" id="result"></div>
+  <div id="out"></div>
 </div>
 
 <script>
+const TOKEN = "GITHUB_TOKEN_HERE"; // Tokeningni shu yerga yoz
+const OWNER = "azizbek2222"; // GitHub username
+const REPO = "html-test";    // GitHub repo nomi
+
 async function upload(){
-  const token = document.getElementById('token').value.trim();
-  const repo  = document.getElementById('repo').value.trim();
-  const path  = document.getElementById('path').value.trim();
-  const html  = document.getElementById('htmlCode').value;
+  const html = document.getElementById("code").value.trim();
+  const filename = document.getElementById("filename").value.trim();
 
-  if(!token||!repo||!path){ alert("Hamma maydonlarni to‘ldir"); return; }
+  if(!html){ alert("HTML kodni yozing!"); return; }
+  if(!filename){ alert("Fayl nomini yozing!"); return; }
 
-  // GitHub token orqali foydalanuvchi username olish
-  const userRes = await fetch('https://api.github.com/user', {
-    headers: { Authorization: `token ${token}` }
-  });
-  if(!userRes.ok){ alert("Token xato yoki foydalanuvchi topilmadi"); return; }
-  const userData = await userRes.json();
-  const owner = userData.login;
+  const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filename}`;
 
-  const api = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-  // oldingi fayl bo‘lsa sha olish
+  // Oldingi fayl bo‘lsa SHA olish
   let sha = null;
-  const check = await fetch(api, { headers:{Authorization:`token ${token}`}});
+  const check = await fetch(api, { headers:{Authorization:"token " + TOKEN}});
   if(check.ok){
     const j = await check.json();
     sha = j.sha;
   }
 
+  // Faylni yaratish yoki update qilish
   const res = await fetch(api,{
     method:"PUT",
     headers:{
-      "Authorization":`token ${token}`,
+      "Authorization":"token " + TOKEN,
       "Content-Type":"application/json"
     },
     body: JSON.stringify({
-      message: "upload via html tool",
+      message: "Create HTML page via tool",
       content: btoa(unescape(encodeURIComponent(html))),
       sha: sha
     })
   });
 
   const data = await res.json();
-  if(!res.ok){
-    document.getElementById('result').innerText = "Xato: " + (data.message||res.status);
-    return;
-  }
 
-  const link = `https://${owner}.github.io/${repo}/${path}`;
-  document.getElementById('result').innerHTML =
-    `Tayyor link: <a href="${link}" target="_blank">${link}</a>
-     <br><button onclick="navigator.clipboard.writeText('${link}')">Nusxalash</button>`;
+  if(data.content){
+    const link = `https://${OWNER}.github.io/${REPO}/${filename}`;
+    document.getElementById("out").innerHTML =
+      "✅ LINK:<br><a href='"+link+"' target='_blank'>"+link+"</a> <br>" +
+      "<button onclick=\"navigator.clipboard.writeText('"+link+"')\">Nusxalash</button>";
+  }else{
+    document.getElementById("out").innerText =
+      "❌ Xatolik: " + JSON.stringify(data);
+}
 }
 </script>
 </body>
