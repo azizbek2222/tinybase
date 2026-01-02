@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 export class TinyBase {
@@ -19,16 +18,32 @@ export class TinyBase {
         this.apiKey = config.apiKey;
     }
 
-    // Real vaqtda balansni kuzatish
-    watchBalance(userId, callback) {
-        const balanceRef = ref(this.db, `users/${userId}/balance`);
-        onValue(balanceRef, (snapshot) => {
-            callback(snapshot.val() || 0);
-        });
+    // API Keyni bazadan tekshirish mantiqi
+    async _checkAuth() {
+        const keyRef = ref(this.db, `api_keys/${this.apiKey}`);
+        const snapshot = await get(keyRef);
+        if (!snapshot.exists()) {
+            throw new Error("TinyBase: Noto'g'ri API Key! Balans bilan ishlash taqiqlanadi.");
+        }
+        return true;
     }
 
-    // Balansni o'zgartirish (saqlash)
+    // Real vaqtda balansni kuzatish
+    async watchBalance(userId, callback) {
+        try {
+            await this._checkAuth();
+            const balanceRef = ref(this.db, `users/${userId}/balance`);
+            onValue(balanceRef, (snapshot) => {
+                callback(snapshot.val() || 0);
+            });
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
+    // Balansni yangilash
     async setBalance(userId, newAmount) {
+        await this._checkAuth();
         const userRef = ref(this.db, `users/${userId}`);
         return update(userRef, {
             balance: newAmount,
@@ -39,6 +54,7 @@ export class TinyBase {
 
     // Bir martalik balansni olish
     async getBalance(userId) {
+        await this._checkAuth();
         const balanceRef = ref(this.db, `users/${userId}/balance`);
         const snapshot = await get(balanceRef);
         return snapshot.val() || 0;
