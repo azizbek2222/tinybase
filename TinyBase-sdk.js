@@ -15,23 +15,29 @@ export class TinyBase {
         this.apiKey = config.apiKey;
     }
 
-    async _checkKey() {
-        const keyRef = ref(this.db, `api_keys/${this.apiKey}`);
-        const snapshot = await get(keyRef);
-        if (!snapshot.exists()) {
-            throw new Error("TinyBase: API kaliti noto'g'ri!");
+    // API kalitni bazadan tekshirish
+    async _validate() {
+        if (!this.apiKey || this.apiKey.includes("...")) {
+            throw new Error("TinyBase: API Key kiritilmagan!");
+        }
+        const checkRef = ref(this.db, `api_keys/${this.apiKey}`);
+        const snap = await get(checkRef);
+        if (!snap.exists()) {
+            throw new Error("TinyBase: API Key noto'g'ri!");
         }
         return true;
     }
 
     async watchBalance(userId, callback) {
-        await this._checkKey();
-        const balanceRef = ref(this.db, `users/${userId}/balance`);
-        onValue(balanceRef, (snap) => callback(snap.val() || 0));
+        try {
+            await this._validate();
+            const balanceRef = ref(this.db, `users/${userId}/balance`);
+            onValue(balanceRef, (snap) => callback(snap.val() || 0));
+        } catch (e) { console.error(e.message); }
     }
 
     async setBalance(userId, amount) {
-        await this._checkKey();
+        await this._validate();
         return update(ref(this.db, `users/${userId}`), {
             balance: amount,
             lastUpdate: Date.now()
