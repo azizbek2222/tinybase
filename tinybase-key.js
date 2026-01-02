@@ -51,7 +51,7 @@ onAuthStateChanged(auth, async (user) => {
             if (apiKeySpan) apiKeySpan.innerText = userApiKey;
             
             const sdkLinkSpan = document.getElementById('sdkUrlDisplay');
-            if (sdkLinkSpan) sdkLinkSpan.innerText = "https://azizbek2222.github.io/tinybase/TinyBase-sdk.js";
+            if (sdkLinkSpan) sdkLinkSpan.innerText = "https://tinybase.vercel.app/TinyBase-sdk.js";
 
         } catch (error) {
             console.error("Firebase xatosi:", error);
