@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TinyBase | Firebase Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo">TinyBase ⚡</div>
+    <h2>Xush kelibsiz</h2>
+    <p>Tizimga kirish yoki ro'yxatdan o'tish</p>
+    
+    <div class="input-group">
+        <input type="email" id="email" placeholder="Email manzil" required>
+    </div>
+    
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Parol" required>
+    </div>
+
+    <div class="button-group">
+        <button id="loginBtn" class="primary-btn">Kirish</button>
+        <button id="registerBtn" class="secondary-btn">Ro'yxatdan o'tish</button>
+    </div>
+    
+    <div id="message" class="error-msg"></div>
+</div>
+
+<script type="module" src="login.js"></script>
+</body>
+</html>

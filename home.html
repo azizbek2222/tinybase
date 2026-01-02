@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TinyBase | Home Dashboard</title>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="menu-container">
+            <button id="menuBtn" class="menu-trigger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div id="sideMenu" class="side-menu">
+                <a href="#" id="apiKeyBtn"><i class="fas fa-key"></i> TinyBase API Key</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Chiqish</a>
+            </div>
+        </div>
+        <div class="user-info">
+            <span id="userEmailText">Yuklanmoqda...</span>
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </nav>
+
+    <main class="dashboard-content">
+        <div class="welcome-card">
+            <h1>Xush kelibsiz, <span id="userName">Foydalanuvchi</span>!</h1>
+            <p>TinyBase Realtime Dashboard paneliga xush kelibsiz.</p>
+            
+            <div class="balance-section">
+                <h3>Sizning Balansingiz</h3>
+                <div class="balance-amount">$ <span id="balanceValue">0.00</span></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="home.js"></script>
+</body>
+</html>

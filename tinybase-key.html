@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyBase | SDK & API</title>
+    <link rel="stylesheet" href="tinybase-key.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Orqaga
+            </a>
+        </div>
+        <div class="user-info">
+            <span id="userEmailText">Yuklanmoqda...</span>
+            <i class="fas fa-user-circle fa-xl"></i>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="key-card">
+            <h2><i class="fas fa-bolt" style="color: #38bdf8; margin-right: 10px;"></i> Realtime SDK Integratsiyasi</h2>
+            <p>Ushbu SDK yordamida loyihangizda real vaqt rejimida ma'lumotlarni boshqaring.</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>JAVASCRIPT MODULE</span>
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i> Nusxa olish
+                    </button>
+                </div>
+                <div class="code-box">
+                    <pre id="sdkCode">
+&lt;script type="module"&gt;
+  import { TinyBase } from "<span id="sdkUrlDisplay" class="highlight">https://azizbek2222.github.io/tinybase/TinyBase-sdk.js</span>";
+
+  const tBase = new TinyBase({
+    apiKey: "<span id="apiKey" class="highlight">YUKLANMOQDA...</span>"
+  });
+
+  // Balansni kuzatish
+  tBase.watchBalance("USER_ID", (val) => console.log("Balans:", val));
+&lt;/script&gt;</pre>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>PROJECT ID</label>
+                    <span id="projID" class="val">---</span>
+                </div>
+                <div class="info-item">
+                    <label>STATUS</label>
+                    <span class="status-active">
+                        <i class="fas fa-circle" style="font-size: 8px;"></i> Onlayn
+                    </span>
+                </div>
+                <div class="info-item">
+                    <label>XAVFSIZLIK</label>
+                    <span class="val">AES-256 / SSL</span>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="tinybase-key.js"></script>
+</body>
+</html>

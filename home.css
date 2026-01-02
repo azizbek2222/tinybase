@@ -1,0 +1,61 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a);
+    height: 100vh;
+    color: white;
+    overflow: hidden;
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Burger Menyu */
+.menu-trigger {
+    background: none; border: none; cursor: pointer;
+    display: flex; flex-direction: column; gap: 5px;
+}
+.menu-trigger span {
+    display: block; width: 25px; height: 3px;
+    background: #38bdf8; border-radius: 2px; transition: 0.3s;
+}
+
+.side-menu {
+    position: absolute; top: 60px; left: -250px;
+    width: 250px; background: #1e293b;
+    border-radius: 0 0 15px 0; padding: 20px;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    transition: 0.4s; z-index: 100;
+}
+.side-menu.active { left: 0; }
+.side-menu a {
+    display: block; color: white; text-decoration: none;
+    padding: 12px; margin-bottom: 10px; border-radius: 8px;
+    transition: 0.3s; font-size: 14px;
+}
+.side-menu a:hover { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+
+/* Dashboard kontent */
+.dashboard-content {
+    display: flex; justify-content: center; align-items: center;
+    height: calc(100vh - 70px);
+}
+.welcome-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px; border-radius: 24px; text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 500px; width: 90%;
+}
+.balance-section {
+    margin-top: 30px; padding: 20px;
+    background: rgba(56, 189, 248, 0.1); border-radius: 15px;
+}
+.balance-amount { font-size: 40px; font-weight: bold; color: #2ecc71; margin-top: 10px; }
+.user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #38bdf8; }
