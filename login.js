@@ -25,10 +25,10 @@ const msg = document.getElementById('message');
 document.getElementById('registerBtn').onclick = () => {
     createUserWithEmailAndPassword(auth, emailInp.value, passInp.value)
     .then((userCredential) => {
-        alert("Ro'yxatdan o'tdingiz!");
+        alert("You are registered.!");
         window.location.href = "home.html";
     })
-    .catch((error) => { msg.innerText = "Xato: " + error.message; });
+    .catch((error) => { msg.innerText = "Error: " + error.message; });
 };
 
 // TIZIMGA KIRISH
@@ -37,5 +37,5 @@ document.getElementById('loginBtn').onclick = () => {
     .then((userCredential) => {
         window.location.href = "home.html";
     })
-    .catch((error) => { msg.innerText = "Email yoki parol xato!"; });
+    .catch((error) => { msg.innerText = "Email or password is incorrect!"; });
 };

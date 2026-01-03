@@ -65,6 +65,6 @@ onAuthStateChanged(auth, async (user) => {
 document.getElementById('copyBtn').onclick = () => {
     const code = document.getElementById('sdkCode').innerText;
     navigator.clipboard.writeText(code).then(() => {
-        alert("SDK kodi nusxalandi!");
+        alert("The SDK code has been copied!");
     });
 };
