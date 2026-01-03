@@ -1,97 +1,122 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TinyBase | SDK Docs</title>
+    <title>TinyBase | SDK Documentation</title>
     <link rel="stylesheet" href="tinybase-docs.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-left">
-            <a href="tinybase-key.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-            <span class="logo">TinyBase Documentation</span>
+            <a href="tinybase-key.html" class="back-btn"><i class="fas fa-chevron-left"></i> Back</a>
+            <span class="logo">TinyBase <span class="badge">v1.0.2</span></span>
         </div>
     </nav>
 
     <div class="container">
         <aside class="sidebar">
+            <div class="sidebar-header">Navigation</div>
             <ul>
-                <li><a href="#auth">Autentifikatsiya</a></li>
-                <li><a href="#database">Ma'lumotlar Bazasi</a></li>
-                <li><a href="#balance">Balans va Moliya</a></li>
+                <li><a href="#init" class="active"><i class="fas fa-rocket"></i> Initialization</a></li>
+                <li><a href="#auth"><i class="fas fa-user-shield"></i> Authentication</a></li>
+                <li><a href="#database"><i class="fas fa-server"></i> Database</a></li>
+                <li><a href="#balance"><i class="fas fa-wallet"></i> Finance</a></li>
             </ul>
         </aside>
 
         <main class="main-content">
-            <section id="auth">
-                <h2><i class="fas fa-user-lock"></i> Foydalanuvchi boshqaruvi</h2>
+            <section id="init">
+                <h1>Getting Started</h1>
+                <p>Initialize TinyBase SDK in your project using your unique API Key.</p>
                 <div class="doc-card">
-                    <h3>signUp / signIn</h3>
-                    <p>Loyihangizga kirish va ro'yxatdan o'tish tizimini qo'shish.</p>
-                    <pre><code>// Ro'yxatdan o'tish
-await tBase.signUp('email@example.com', 'password');
+                    <div class="method">new TinyBase({ apiKey })</div>
+                    <p>Creates a new instance of TinyBase.</p>
+                    <pre><code>import { TinyBase } from "https://tinybase.vercel.app/TinyBase-sdk.js";
 
-// Tizimga kirish
-await tBase.signIn('email@example.com', 'password');</code></pre>
-                </div>
-            </section>
-
-            <section id="database">
-                <h2><i class="fas fa-database"></i> Universal Ma'lumotlar Bazasi</h2>
-                <p style="margin-bottom: 15px; color: #94a3b8;">Ushbu metodlar ixtiyoriy turdagi (mahsulotlar, xabarlar, postlar, musiqalar) ma'lumotlar bilan ishlashga mo'ljallangan.</p>
-
-                <div class="doc-card">
-                    <h3>dbSave(path, data)</h3>
-                    <p><b>Vazifasi:</b> Yangi ma'lumot qo'shish. <i>path</i> - bu papka nomi (kategoriya), <i>data</i> - obyekt.</p>
-                    <pre><code>// Mahsulot qo'shish misoli:
-await tBase.dbSave('products', { name: 'iPhone 15', price: 999 });
-
-// Xabar yuborish misoli:
-await tBase.dbSave('chats', { user: 'Ali', text: 'Salom!' });</code></pre>
-                </div>
-
-                <div class="doc-card">
-                    <h3>dbUpdate(path, data)</h3>
-                    <p><b>Vazifasi:</b> Mavjud ma'lumotni uning ID-si orqali tahrirlash.</p>
-                    <pre><code>// Ma'lumotni yangilash:
-await tBase.dbUpdate('products/ID_KODI', { price: 899 });</code></pre>
-                </div>
-
-                <div class="doc-card">
-                    <h3>dbDelete(path)</h3>
-                    <p><b>Vazifasi:</b> Yo'nalish bo'yicha ma'lumotni o'chirish.</p>
-                    <pre><code>// O'chirish:
-await tBase.dbDelete('products/ID_KODI');</code></pre>
-                </div>
-
-                <div class="doc-card">
-                    <h3>dbWatch(path, callback)</h3>
-                    <p><b>Vazifasi:</b> Bazani real-vaqtda kuzatish. Ma'lumot o'zgarsa, ilovangiz avtomatik yangilanadi.</p>
-                    <pre><code>tBase.dbWatch('products', (data) => {
-    console.log("Bazadagi yangi ro'yxat:", data);
+const tBase = new TinyBase({
+    apiKey: "YOUR_TNB_KEY_HERE"
 });</code></pre>
                 </div>
             </section>
 
-            <section id="balance">
-                <h2><i class="fas fa-wallet"></i> Balans va Hisob-kitob</h2>
+            <section id="auth">
+                <h2>Authentication</h2>
+                <p>Manage users with secure Firebase-powered auth methods.</p>
+                
                 <div class="doc-card">
-                    <h3>watchBalance / setBalance</h3>
-                    <p>Foydalanuvchining hamyonini yoki ochkolari (points) bilan ishlash.</p>
-                    <pre><code>// Balansni ekranda ko'rsatish
-tBase.watchBalance('USER_ID', (summa) => {
-    document.getElementById('wallet').innerText = summa;
-});
+                    <div class="method">signUp(email, password)</div>
+                    <p>Register a new user account.</p>
+                    <pre><code>await tBase.signUp('user@example.com', 'securePass123');</code></pre>
+                </div>
 
-// Balansni o'zgartirish (masalan, yutuq berish)
-await tBase.setBalance('USER_ID', 15000);</code></pre>
+                <div class="doc-card">
+                    <div class="method">signIn(email, password)</div>
+                    <p>Log in an existing user.</p>
+                    <pre><code>await tBase.signIn('user@example.com', 'password');</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <div class="method">onAuthChange(callback)</div>
+                    <p>Monitor current user session state.</p>
+                    <pre><code>tBase.onAuthChange((user) => {
+    if (user) console.log("User UID:", user.uid);
+});</code></pre>
+                </div>
+            </section>
+
+            <section id="database">
+                <h2>Realtime Database</h2>
+                <p>Manage data with automatic synchronization across all clients.</p>
+
+                <div class="doc-card">
+                    <div class="method">dbSave(path, data)</div>
+                    <p>Push new data to a specific path with a generated ID.</p>
+                    <pre><code>await tBase.dbSave('musics', { name: 'Shape of You', author: 'Ed Sheeran' });</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <div class="method">dbUpdate(path, data)</div>
+                    <p>Update specific fields at the given path.</p>
+                    <pre><code>await tBase.dbUpdate('musics/ID_123', { name: 'Updated Name' });</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <div class="method">dbWatch(path, callback)</div>
+                    <p>Listen for real-time changes. Executes callback whenever data changes.</p>
+                    <pre><code>tBase.dbWatch('musics', (data) => {
+    console.log("Live Data:", data);
+});</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <div class="method">dbDelete(path)</div>
+                    <p>Remove data permanently from the database.</p>
+                    <pre><code>await tBase.dbDelete('musics/ID_123');</code></pre>
+                </div>
+            </section>
+
+            <section id="balance">
+                <h2>Financial System</h2>
+                <p>Built-in methods for handling user balances and points.</p>
+
+                <div class="doc-card">
+                    <div class="method">watchBalance(userId, callback)</div>
+                    <p>Track a user's balance in real-time.</p>
+                    <pre><code>tBase.watchBalance('USER_ID', (balance) => {
+    document.getElementById('display').innerText = balance + " $";
+});</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <div class="method">setBalance(userId, amount)</div>
+                    <p>Update user's balance to a specific numeric value.</p>
+                    <pre><code>await tBase.setBalance('USER_ID', 5000);</code></pre>
                 </div>
             </section>
         </main>
     </div>
-    <script src="tinybase-docs.js"></script>
 </body>
 </html>
