@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TinyBase | Dokumentatsiya</title>
+    <title>TinyBase | SDK Docs</title>
     <link rel="stylesheet" href="tinybase-docs.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,64 +12,82 @@
     <nav class="navbar">
         <div class="nav-left">
             <a href="tinybase-key.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-            <span class="logo">TinyBase Docs</span>
+            <span class="logo">TinyBase Documentation</span>
         </div>
     </nav>
 
     <div class="container">
         <aside class="sidebar">
             <ul>
-                <li><a href="#intro">Kirish</a></li>
-                <li><a href="#auth">Auth</a></li>
-                <li><a href="#database">Baza</a></li>
-                <li><a href="#balance">Balans</a></li>
+                <li><a href="#auth">Autentifikatsiya</a></li>
+                <li><a href="#database">Ma'lumotlar Bazasi</a></li>
+                <li><a href="#balance">Balans va Moliya</a></li>
             </ul>
         </aside>
 
         <main class="main-content">
-            <section id="intro">
-                <h1>SDK Qo'llanmasi</h1>
-                <p>TinyBase SDK yordamida loyihangizni bir necha daqiqada real-vaqt rejimiga o'tkazing.</p>
-            </section>
-
             <section id="auth">
-                <h2><i class="fas fa-user-lock"></i> Autentifikatsiya</h2>
-                
+                <h2><i class="fas fa-user-lock"></i> Foydalanuvchi boshqaruvi</h2>
                 <div class="doc-card">
-                    <h3>signUp(email, pass)</h3>
-                    <p>Yangi foydalanuvchini ro'yxatdan o'tkazish.</p>
-                    <pre><code>await tBase.signUp(email, pass);</code></pre>
-                </div>
+                    <h3>signUp / signIn</h3>
+                    <p>Loyihangizga kirish va ro'yxatdan o'tish tizimini qo'shish.</p>
+                    <pre><code>// Ro'yxatdan o'tish
+await tBase.signUp('email@example.com', 'password');
 
-                <div class="doc-card">
-                    <h3>onAuthChange(cb)</h3>
-                    <p>Foydalanuvchi holatini kuzatish.</p>
-                    <pre><code>tBase.onAuthChange((user) => { ... });</code></pre>
+// Tizimga kirish
+await tBase.signIn('email@example.com', 'password');</code></pre>
                 </div>
             </section>
 
             <section id="database">
-                <h2><i class="fas fa-database"></i> Ma'lumotlar bazasi</h2>
-                
+                <h2><i class="fas fa-database"></i> Universal Ma'lumotlar Bazasi</h2>
+                <p style="margin-bottom: 15px; color: #94a3b8;">Ushbu metodlar ixtiyoriy turdagi (mahsulotlar, xabarlar, postlar, musiqalar) ma'lumotlar bilan ishlashga mo'ljallangan.</p>
+
                 <div class="doc-card">
                     <h3>dbSave(path, data)</h3>
-                    <p>Ma'lumot qo'shish (Musiqa va h.k.).</p>
-                    <pre><code>await tBase.dbSave('musics', { title: '...' });</code></pre>
+                    <p><b>Vazifasi:</b> Yangi ma'lumot qo'shish. <i>path</i> - bu papka nomi (kategoriya), <i>data</i> - obyekt.</p>
+                    <pre><code>// Mahsulot qo'shish misoli:
+await tBase.dbSave('products', { name: 'iPhone 15', price: 999 });
+
+// Xabar yuborish misoli:
+await tBase.dbSave('chats', { user: 'Ali', text: 'Salom!' });</code></pre>
                 </div>
 
                 <div class="doc-card">
-                    <h3>dbWatch(path, cb)</h3>
-                    <p>Real-vaqtda ma'lumotni olish.</p>
-                    <pre><code>tBase.dbWatch('musics', (data) => { ... });</code></pre>
+                    <h3>dbUpdate(path, data)</h3>
+                    <p><b>Vazifasi:</b> Mavjud ma'lumotni uning ID-si orqali tahrirlash.</p>
+                    <pre><code>// Ma'lumotni yangilash:
+await tBase.dbUpdate('products/ID_KODI', { price: 899 });</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <h3>dbDelete(path)</h3>
+                    <p><b>Vazifasi:</b> Yo'nalish bo'yicha ma'lumotni o'chirish.</p>
+                    <pre><code>// O'chirish:
+await tBase.dbDelete('products/ID_KODI');</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <h3>dbWatch(path, callback)</h3>
+                    <p><b>Vazifasi:</b> Bazani real-vaqtda kuzatish. Ma'lumot o'zgarsa, ilovangiz avtomatik yangilanadi.</p>
+                    <pre><code>tBase.dbWatch('products', (data) => {
+    console.log("Bazadagi yangi ro'yxat:", data);
+});</code></pre>
                 </div>
             </section>
 
             <section id="balance">
-                <h2><i class="fas fa-wallet"></i> Balans tizimi</h2>
+                <h2><i class="fas fa-wallet"></i> Balans va Hisob-kitob</h2>
                 <div class="doc-card">
-                    <h3>watchBalance(id, cb)</h3>
-                    <p>Balansni real-vaqtda kuzatish.</p>
-                    <pre><code>tBase.watchBalance(id, (val) => { ... });</code></pre>
+                    <h3>watchBalance / setBalance</h3>
+                    <p>Foydalanuvchining hamyonini yoki ochkolari (points) bilan ishlash.</p>
+                    <pre><code>// Balansni ekranda ko'rsatish
+tBase.watchBalance('USER_ID', (summa) => {
+    document.getElementById('wallet').innerText = summa;
+});
+
+// Balansni o'zgartirish (masalan, yutuq berish)
+await tBase.setBalance('USER_ID', 15000);</code></pre>
                 </div>
             </section>
         </main>
