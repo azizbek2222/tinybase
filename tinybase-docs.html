@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TinyBase | Dokumentatsiya</title>
+    <link rel="stylesheet" href="tinybase-docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="tinybase-key.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <span class="logo">TinyBase Docs</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#intro">Kirish</a></li>
+                <li><a href="#auth">Auth</a></li>
+                <li><a href="#database">Baza</a></li>
+                <li><a href="#balance">Balans</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="intro">
+                <h1>SDK Qo'llanmasi</h1>
+                <p>TinyBase SDK yordamida loyihangizni bir necha daqiqada real-vaqt rejimiga o'tkazing.</p>
+            </section>
+
+            <section id="auth">
+                <h2><i class="fas fa-user-lock"></i> Autentifikatsiya</h2>
+                
+                <div class="doc-card">
+                    <h3>signUp(email, pass)</h3>
+                    <p>Yangi foydalanuvchini ro'yxatdan o'tkazish.</p>
+                    <pre><code>await tBase.signUp(email, pass);</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <h3>onAuthChange(cb)</h3>
+                    <p>Foydalanuvchi holatini kuzatish.</p>
+                    <pre><code>tBase.onAuthChange((user) => { ... });</code></pre>
+                </div>
+            </section>
+
+            <section id="database">
+                <h2><i class="fas fa-database"></i> Ma'lumotlar bazasi</h2>
+                
+                <div class="doc-card">
+                    <h3>dbSave(path, data)</h3>
+                    <p>Ma'lumot qo'shish (Musiqa va h.k.).</p>
+                    <pre><code>await tBase.dbSave('musics', { title: '...' });</code></pre>
+                </div>
+
+                <div class="doc-card">
+                    <h3>dbWatch(path, cb)</h3>
+                    <p>Real-vaqtda ma'lumotni olish.</p>
+                    <pre><code>tBase.dbWatch('musics', (data) => { ... });</code></pre>
+                </div>
+            </section>
+
+            <section id="balance">
+                <h2><i class="fas fa-wallet"></i> Balans tizimi</h2>
+                <div class="doc-card">
+                    <h3>watchBalance(id, cb)</h3>
+                    <p>Balansni real-vaqtda kuzatish.</p>
+                    <pre><code>tBase.watchBalance(id, (val) => { ... });</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="tinybase-docs.js"></script>
+</body>
+</html>

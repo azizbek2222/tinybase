@@ -12,11 +12,11 @@
     <nav class="navbar">
         <div class="nav-left">
             <a href="home.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back
+                <i class="fas fa-arrow-left"></i> Orqaga
             </a>
         </div>
         <div class="user-info">
-            <span id="userEmailText">Loading...</span>
+            <span id="userEmailText">Yuklanmoqda...</span>
             <i class="fas fa-user-circle fa-xl"></i>
         </div>
     </nav>
@@ -24,13 +24,13 @@
     <main class="content">
         <div class="key-card">
             <h2><i class="fas fa-bolt" style="color: #38bdf8; margin-right: 10px;"></i> Realtime SDK Integratsiyasi</h2>
-            <p>Manage real-time authentication and data in your project with this SDK.</p>
+            <p>Loyihangizga TinyBase SDK-ni ulang va ishlashni boshlang.</p>
             
             <div class="code-container">
                 <div class="code-header">
                     <span>JAVASCRIPT MODULE</span>
                     <button class="copy-btn" id="copyBtn">
-                        <i class="fas fa-copy"></i> Get a copy
+                        <i class="fas fa-copy"></i> Nusxa olish
                     </button>
                 </div>
                 <div class="code-box">
@@ -38,54 +38,19 @@
 &lt;script type="module"&gt;
   import { TinyBase } from "<span id="sdkUrlDisplay" class="highlight">https://tinybase.vercel.app/TinyBase-sdk.js</span>";
 
+  // TinyBase-ni ishga tushirish
   const tBase = new TinyBase({
-    apiKey: "<span id="apiKey" class="highlight">LOADING...</span>"
+    apiKey: "<span id="apiKey" class="highlight">YUKLANMOQDA...</span>"
   });
 
-  // 1. Registration (Email and Password)
-  async function signup(email, password) {
-    const res = await tBase.signUp(email, password);
-    console.log("Registered:", res.user.uid);
-  }
-
-  // 2. Login to the system
-  async function login(email, password) {
-    await tBase.signIn(email, password);
-    console.log("Logged in");
-  }
-  
-  // 3. Password Recovery (Newly Added)
-async function forgotPassword(email) {
-  await tBase.resetPassword(email);
-  alert("Parolni tiklash xati yuborildi!");
-  }
-
-  // 4. Logout (Newly Added)
-  function logout() {
-  tBase.logOut().then(() => console.log("Chiqildi"));
-  }
-
-
-  // 5. User Status and Balance Tracking
-  tBase.onAuthChange((user) => {
-    if (user) {
-      console.log("User:", user.email);
-      
-      // Real-time balance tracking
-      tBase.watchBalance(user.uid, (val) => {
-        console.log("Current balance:", val);
-      });
-    } else {
-      console.log("Not logged in");
-    }
-  });
+  // Endi tBase orqali barcha funksiyalardan foydalanish mumkin.
 &lt;/script&gt;</pre>
                 </div>
             </div>
 
             <div class="info-grid">
                 <div class="info-item">
-                    <label>PROJECT ID</label>
+                    <label>LOYIHA ID</label>
                     <span id="projID" class="val">---</span>
                 </div>
                 <div class="info-item">
@@ -95,9 +60,16 @@ async function forgotPassword(email) {
                     </span>
                 </div>
                 <div class="info-item">
-                    <label>SAFETY</label>
+                    <label>XAVFSIZLIK</label>
                     <span class="val">AES-256 / SSL</span>
                 </div>
+            </div>
+
+            <div style="margin-top: 35px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
+                <p style="color: #94a3b8; font-size: 14px; margin-bottom: 12px;">Barcha funksiyalar (Auth, Database, Music) qo'llanmasi:</p>
+                <a href="tinybase-docs.html" style="display: inline-block; background: rgba(56, 189, 248, 0.1); color: #38bdf8; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: 0.3s;">
+                    <i class="fas fa-book-open" style="margin-right: 8px;"></i> To'liq hujjatlarni ko'rish
+                </a>
             </div>
         </div>
     </main>
