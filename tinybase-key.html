@@ -12,11 +12,11 @@
     <nav class="navbar">
         <div class="nav-left">
             <a href="home.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Orqaga
+                <i class="fas fa-arrow-left"></i> Back
             </a>
         </div>
         <div class="user-info">
-            <span id="userEmailText">Yuklanmoqda...</span>
+            <span id="userEmailText">Loading...</span>
             <i class="fas fa-user-circle fa-xl"></i>
         </div>
     </nav>
@@ -24,13 +24,13 @@
     <main class="content">
         <div class="key-card">
             <h2><i class="fas fa-bolt" style="color: #38bdf8; margin-right: 10px;"></i> Realtime SDK Integratsiyasi</h2>
-            <p>Loyihangizga TinyBase SDK-ni ulang va ishlashni boshlang.</p>
+            <p>Connect the TinyBase SDK to your project and start working.</p>
             
             <div class="code-container">
                 <div class="code-header">
                     <span>JAVASCRIPT MODULE</span>
                     <button class="copy-btn" id="copyBtn">
-                        <i class="fas fa-copy"></i> Nusxa olish
+                        <i class="fas fa-copy"></i> Copying
                     </button>
                 </div>
                 <div class="code-box">
@@ -38,19 +38,19 @@
 &lt;script type="module"&gt;
   import { TinyBase } from "<span id="sdkUrlDisplay" class="highlight">https://tinybase.vercel.app/TinyBase-sdk.js</span>";
 
-  // TinyBase-ni ishga tushirish
+  // Launch TinyBase
   const tBase = new TinyBase({
     apiKey: "<span id="apiKey" class="highlight">YUKLANMOQDA...</span>"
   });
 
-  // Endi tBase orqali barcha funksiyalardan foydalanish mumkin.
+  // Now all functions can be used via tBase.
 &lt;/script&gt;</pre>
                 </div>
             </div>
 
             <div class="info-grid">
                 <div class="info-item">
-                    <label>LOYIHA ID</label>
+                    <label>PROJECT ID</label>
                     <span id="projID" class="val">---</span>
                 </div>
                 <div class="info-item">
@@ -60,15 +60,15 @@
                     </span>
                 </div>
                 <div class="info-item">
-                    <label>XAVFSIZLIK</label>
+                    <label>SAFETY</label>
                     <span class="val">AES-256 / SSL</span>
                 </div>
             </div>
 
             <div style="margin-top: 35px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
-                <p style="color: #94a3b8; font-size: 14px; margin-bottom: 12px;">Barcha funksiyalar (Auth, Database, Music) qo'llanmasi:</p>
+                <p style="color: #94a3b8; font-size: 14px; margin-bottom: 12px;">All features guide:</p>
                 <a href="tinybase-docs.html" style="display: inline-block; background: rgba(56, 189, 248, 0.1); color: #38bdf8; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: 0.3s;">
-                    <i class="fas fa-book-open" style="margin-right: 8px;"></i> To'liq hujjatlarni ko'rish
+                    <i class="fas fa-book-open" style="margin-right: 8px;"></i> View full documentation
                 </a>
             </div>
         </div>
