@@ -53,8 +53,20 @@
     await tBase.signIn(email, password);
     console.log("Logged in");
   }
+  
+  // 3. Password Recovery (Newly Added)
+async function forgotPassword(email) {
+  await tBase.resetPassword(email);
+  alert("Parolni tiklash xati yuborildi!");
+  }
 
-  // 3. User Status and Balance Tracking
+  // 4. Logout (Newly Added)
+  function logout() {
+  tBase.logOut().then(() => console.log("Chiqildi"));
+  }
+
+
+  // 5. User Status and Balance Tracking
   tBase.onAuthChange((user) => {
     if (user) {
       console.log("User:", user.email);
